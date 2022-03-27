@@ -1,0 +1,10 @@
+minikube version
+minikube start (start a cluser)
+kubectl version
+kubectl cluster-info
+kubectl get nodes
+kubectl create deployment <name> --image=<image name>
+kubectl get deployments
+kubectl proxy (proxy to forward communication to cluster private network)
+kubectl get pods
+kubectl describe pods
