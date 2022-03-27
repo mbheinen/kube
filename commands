@@ -5,6 +5,12 @@ kubectl cluster-info
 kubectl get nodes
 kubectl create deployment <name> --image=<image name>
 kubectl get deployments
+
 kubectl proxy (proxy to forward communication to cluster private network)
+
+For example, HTTP endpoints like this:
+curl http://localhost:8001/version
+curl http://localhost:8001/api/v1/namespaces/default/pods/<pod name>/
+
 kubectl get pods
 kubectl describe pods
