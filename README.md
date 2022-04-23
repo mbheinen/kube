@@ -1,84 +1,49 @@
-# Commands Cheatsheet
-Below are common commands needed to manage Kubernetes cluster.
+# Kubernetes
+[Kubernetes](https://kubernetes.io/) scratch notes repo used for reference and studying to hopefully get certification some day.
 
-## minikube
-[minikube](https://minikube.sigs.k8s.io/docs/) is great tool for local single node Kubernetes cluster.
+k8s - "kates"
 
-```
-minikube version
-minikube start (start a cluser)
-minikube ip (get ip)
-minikube service <service name>
-minikube delete
-```
+`kubectl` - "koob e" or "koob" or "cube" plus "cuttle" or "C T L" or "control". It is the command line interface for working with a Kubernetes cluster.
 
-Can even emulate Load Balancer
+Kubernetes doesn't exonerate administrators from having to thoroughly know and understand the complexity of the applications they're deploying. If you want a well tuned cluster, especially when running on cloud, it is very important to first understand the details of your application. Don't think to yourself that Kubernetes lets you reap all the benefits and skip the complexity. If anything it forces you to take time to deeply understand your architecture.
 
-  `minikube tunnel`
+## Kubernetes Manifests
+Kubernetes Manifests are definition of Kubernetes objects that define the state of the cluster in a declarative way.
 
-## Kubernetes
-If using cloud provider, can set KUBECONFIG environment var for cluster config .yml
+Good way to start is to copy an existing Kubernetes manifest or [Helm](https://helm.sh/) chart and teak it. You'll get working examples running quickly while learning the configuration fields.
 
-  `export KUBECONFIG=/path/to/file`
+Separate objects based on how you want to manage (e.g. separate database from the app). Good practice to use labels and set resource limits even though these things aren't required.
 
-General admin commands:
-```
-kubectl version
-kubectl cluster-info
-```
+Use namespaces to organize related components of your application. Can deploy into a namespace. If no namespace given, Kubernetes will deploy to a default namespace.
 
-List basic Kubernetes objects
-```
-kubectl get nodes
-kubectl get pods
-kubeclt get services
-kubeclt get deployments
-```
+Kinds of Kubernetes objects:
 
-You can use "-w" to watch kubectl commands
+  * PersistentVolumeClaim (PVC) - Stores state (e.g. volume for database content, drupal code resources). Most cloud Kubernetes providers have default storage mechanism (e.g. Block Volume on Linode). Lots of the default volumes only allow mounting to one container which means if you try to scale up the Deployment you'll see Kubernetes throw multi-mount errors.
+  * Deployment - Stateless containerized component (e.g. MariaDB server process, fontend). Reference PVCs to store state. Use initContainers to do pre-run tasks in a container (e.g. drupal themes setup which require  running drupal instance). Setup liveness and readiness probes which are basically heartbeat mechanisms. Be careful not to set these too stringent.
+  * Service - Exposes a Deployment. Can expose internal to the Kubernetes cluster or outside the cluster.
+  * ConfigMap - Configuration such as variables, files, etc. Config maps can be directly mounted into Deployments. You can use template to build config file, change file permissions.
 
-  `kubeclt get services -w`
 
-Describe basic Kubernetes objects - Long list
-```
-kubectl describe pods
-kubectl describe services/<service name>
-kubectl describe deployment
-```
+## Cloud Providers
+Lots of cloud providers have fully managed Kubernetes clusters. Here are some:
 
-All things go into "default" namespace unless you create and specify a different one
+ * [Linode LKE](https://www.linode.com/products/kubernetes/)
+ * [Vultr Kubernetes Engine](https://www.vultr.com/pricing/#kubernetes-engine)
+ * [Digital Ocean](https://www.digitalocean.com/products/kubernetes)
+ * [Azure AKS](https://azure.microsoft.com/en-us/services/kubernetes-service/)
+ * [Google Cloud Platform GKE](https://azure.microsoft.com/en-us/services/kubernetes-service/)
+ * [AWS EKS](https://aws.amazon.com/kubernetes/)
 
-  `kubectl create namespace`
+## Helm
+Simple way to think of [Helm](https://helm.sh/) is that it's a way to share Kubernetes manifests. These are called Helm charts and  versions are referred to as "releases".
 
-Create a new deployment
+Be careful about using Helm early on in learning because there is a lot of complexity that Helm hides from you. While this hiding is done on purpose and part of its value add, it doesn't allow you to master Kubernetes.
 
-  `kubectl create deployment <name> --image=<image name>`
+## Rook
+Simple way to think about [Rook](https://rook.io/) is that it's RAID for Kuberentes volumes. Similar to Helm, be careful because it is more complex than it  first appears. There's a lot of layers of things going on with it. If you need it, it is a great tool but don't start here for 101 volume mounts. Most use cases can probably use a Network File System (NFS).
 
-Can start proxy which exposes set of REST endpionts that can forward communication to cluster private network.
+## Full VMs on Kubernetes
+[kubevirt](https://kubevirt.io/) is one way to move existing Virtual Machine-based workloads that cannot be easily containerized to run on Kubernetes clusters. Can be helpful when migrating legacy applications.
 
-  `kubectl proxy`
-
-Proxy will expose HTTP endpoints like this:
-```
-curl http://localhost:8001/version
-curl http://localhost:8001/api/v1/namespaces/default/pods/<pod name>/
-```
-
-Anything application normally sends to stdout is considered a log. Access these with:
-
-  `kubectl logs <pod name>`
-
-Can execute commands in a pod:
-```
-kubectl exec <pod name> -- env
-kubectl exec -it <pod name> -- bash (interactive TTY session:)
-```
-
-Create a new service
-
-  `kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080`
-
-Apply a new label:
-
-  `kubectl label pods <pod name> version=v1`
-
+## Apache Bench
+Apache Bench is a command line HTTP benchmark tool, `ab`. Great tool to quickly test scaled sites and APIs that use HTTP. It's part of the [Apache HTTP](https://httpd.apache.org/) project. You can install it with `apt install apache2-utils`. 
