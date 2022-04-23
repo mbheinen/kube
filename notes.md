@@ -1,6 +1,9 @@
 # Kubernetes Notes
 [Kubernetes](https://kubernetes.io/)
 
+k8s - "kates"
+`kubectl` - "koob e" or "koob" or "cube" plus "cuttle" or "C T L" or "control". Main command line interface for working with Kubernetes clusters.
+
 ## Full VMs on Kubernetes
 Existing Virtual Machine-based workloads that cannot be easily containerized
 [kubevirt](https://kubevirt.io/)

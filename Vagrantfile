@@ -1,0 +1,19 @@
+Vagrant.configure("2") do |config|
+  config.ssh.insert_key = false
+  config.vm.box = "ubuntu/focal64"
+
+  # VirtualBox.
+  config.vm.define "virtualbox" do |virtualbox|
+    virtualbox.vm.hostname = "lamp-drupal.test"
+    virtualbox.vm.network :private_network, ip: "192.168.80.80"
+
+    config.vm.provider :virtualbox do |v|
+      v.gui = false
+      v.memory = 1024
+      v.cpus = 1
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+    end
+  end
+
+end
