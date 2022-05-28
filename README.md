@@ -10,8 +10,6 @@ Kubernetes doesn't exonerate administrators from having to thoroughly know and u
 ## Kubernetes Manifests
 Kubernetes Manifests are definition of Kubernetes objects that define the state of the cluster in a declarative way.
 
-Good way to start is to copy an existing Kubernetes manifest or [Helm](https://helm.sh/) chart and teak it. You'll get working examples running quickly while learning the configuration fields.
-
 Separate objects based on how you want to manage (e.g. separate database from the app). Good practice to use labels and set resource limits even though these things aren't required.
 
 Use namespaces to organize related components of your application. Can deploy into a namespace. If no namespace given, Kubernetes will deploy to a default namespace.
@@ -23,6 +21,7 @@ Kinds of Kubernetes objects:
   * Service - Exposes a Deployment. Can expose internal to the Kubernetes cluster or outside the cluster.
   * ConfigMap - Configuration such as variables, files, etc. Config maps can be directly mounted into Deployments. You can use template to build config file, change file permissions.
 
+Good way to start is to copy an existing Kubernetes manifest or [Helm](https://helm.sh/) chart and teak it. You'll get working examples running quickly while learning the configuration fields.
 
 ## Cloud Providers
 Lots of cloud providers have fully managed Kubernetes clusters. Here are some:
@@ -40,10 +39,21 @@ Simple way to think of [Helm](https://helm.sh/) is that it's a way to share Kube
 Be careful about using Helm early on in learning because there is a lot of complexity that Helm hides from you. While this hiding is done on purpose and part of its value add, it doesn't allow you to master Kubernetes.
 
 ## Rook
-Simple way to think about [Rook](https://rook.io/) is that it's RAID for Kuberentes volumes. Similar to Helm, be careful because it is more complex than it  first appears. There's a lot of layers of things going on with it. If you need it, it is a great tool but don't start here for 101 volume mounts. Most use cases can probably use a Network File System (NFS).
+Simple way to think about [Rook](https://rook.io/) is that it's RAID for Kuberentes volumes. Similar to Helm, be careful because it is more complex than it first appears. There's a lot of layers of things going on with it. If you need it, it is a great tool but don't start here for 101 volume mounts. Most use cases can probably use a Network File System (NFS).
 
 ## Full VMs on Kubernetes
 [kubevirt](https://kubevirt.io/) is one way to move existing Virtual Machine-based workloads that cannot be easily containerized to run on Kubernetes clusters. Can be helpful when migrating legacy applications.
+
+## Ingress
+Ingress is a Kubernetes managed way to configure inbound data requests to the cluster. It provides load balancing to set of backend services via an ingress controller. Can use nginx, haproxy, 
+
+For example, we can use Helm chart.
+
+  `helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx`
+
+  `helm install ingress-nginx ingress-nginx/ingress-nginx`
+
+
 
 ## Apache Bench
 Apache Bench is a command line HTTP benchmark tool, `ab`. Great tool to quickly test scaled sites and APIs that use HTTP. It's part of the [Apache HTTP](https://httpd.apache.org/) project. You can install it with `apt install apache2-utils`. 

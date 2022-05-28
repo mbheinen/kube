@@ -1,21 +1,6 @@
 # Commands Cheatsheet
 Below are common commands needed to manage a Kubernetes cluster.
 
-## minikube
-[minikube](https://minikube.sigs.k8s.io/docs/) is great tool for local single node Kubernetes cluster.
-
-```
-minikube version
-minikube start (start a cluser)
-minikube ip (get ip)
-minikube service <service name>
-minikube delete
-```
-
-Can even emulate Load Balancer
-
-  `minikube tunnel`
-
 ## kubectl
 If using cloud provider, can set KUBECONFIG environment var for cluster config .yml
 
@@ -114,3 +99,17 @@ Autoscale with config in manifest or from `kubectl`. For example,
 
   `kubectl autoscale -n <namespace> deployment <deployment> --min=1 --max-8 --cpu-percent=50`
 
+## minikube
+[minikube](https://minikube.sigs.k8s.io/docs/) is great tool for local single node Kubernetes cluster.
+
+```
+minikube version
+minikube start (start a cluser)
+minikube ip (get ip)
+minikube service <service name>
+minikube delete
+```
+
+Can even emulate Load Balancer
+
+  `minikube tunnel`
