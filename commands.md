@@ -16,9 +16,11 @@ List basic Kubernetes objects
 ```
 kubectl get nodes
 kubectl get pods
-kubeclt get services
-kubeclt get deployments
-kubeclt get storageclass
+kubectl get services
+kubectl get deployments
+kubectl get storageclass
+kubectl get clusterissuer
+kubectl get cronjob
 ```
 
 Use `-o wide` to get wide output and use "-w" with kubectl commands to watch them similar to Linux `watch`.
