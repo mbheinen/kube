@@ -63,6 +63,9 @@ Simple way to think about [Rook](https://rook.io/) is that it's RAID for Kuberen
 ## Apache Bench
 Apache Bench is a command line HTTP benchmark tool, `ab`. Great tool to quickly test scaled sites and APIs that use HTTP. It's part of the [Apache HTTP](https://httpd.apache.org/) project. You can install it with `apt install apache2-utils`.
 
+## Operators
+You can write your own operator for more complex applications/pods that you need to deploy.
+
 ## Sidecar
 Use sidecar container when you need to run another service in support of an existing service or container. Since Kubernetes likes one service per container, it can get  messy to try to run more than one service from a single container. This may come into play when you need something like a syslog server for a component. Run the syslog server in a sidecar container which will come up with the main container.
 
@@ -71,3 +74,6 @@ Use sidecar container when you need to run another service in support of an exis
 
 ## Log Monitoring
 Elastic, SumoLogic, Datadog.
+
+## Cluster Configuration
+kubespray, kOps, or kubeadm to create Kubernetes cluster.
