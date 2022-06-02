@@ -72,8 +72,8 @@ Use sidecar container when you need to run another service in support of an exis
 ## Full VMs on Kubernetes
 [kubevirt](https://kubevirt.io/) is one way to move existing Virtual Machine-based workloads that cannot be easily containerized to run on Kubernetes clusters. Can be helpful when migrating legacy applications.
 
-## Log Monitoring
-Elastic, SumoLogic, Datadog.
+## Logging/Monitoring
+You can use one of the many cloud services to do this such as [Elastic](https://www.elastic.co/elastic-stack/), [sumo logic](https://www.sumologic.com/solutions/log-management/), or [Datadog](https://www.datadoghq.com/). Be aware of cost because it can grow quite large if you send absolutely every log to the service. Another option is to run your own Elastic, LogStash, Kibana (ELK) stack within the Kubernetes cluster. This really only works to a certain scale and can be problematic if the cluster if having issues because you may not be able to see logs.
 
 ## Cluster Configuration
 kubespray, kOps, or kubeadm to create Kubernetes cluster.
