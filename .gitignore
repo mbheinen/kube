@@ -1,2 +1,5 @@
 *.un~
 *~
+*.tar
+*.tar.xz
+/lab2/LFD259

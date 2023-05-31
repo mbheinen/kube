@@ -1,0 +1,37 @@
+resources:
+- type: compute.v1.instance
+  name: cp
+  properties:
+    zone: us-central1-f
+    machineType: https://www.googleapis.com/compute/v1/projects/ckad-class-388403/zones/us-central1-f/machineTypes/e2-standard-2
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20230523
+    networkInterfaces:
+    - network: https://www.googleapis.com/compute/v1/projects/ckad-class-388403/global/networks/default
+      # Access Config required to give the instance a public IP address
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+- type: compute.v1.instance
+  name: worker-1
+  properties:
+    zone: us-central1-f
+    machineType: https://www.googleapis.com/compute/v1/projects/ckad-class-388403/zones/us-central1-f/machineTypes/e2-small
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20230523
+    networkInterfaces:
+    - network: https://www.googleapis.com/compute/v1/projects/ckad-class-388403/global/networks/default
+      # Access Config required to give the instance a public IP address
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
