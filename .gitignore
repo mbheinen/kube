@@ -2,4 +2,5 @@
 *~
 *.tar
 *.tar.xz
-/lab2/LFD259
+LFD259/
+.vagrant/

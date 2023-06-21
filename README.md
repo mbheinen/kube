@@ -13,23 +13,25 @@ Started as Google open source project announced in 2014. Google used lessons lea
 ## Architecture
 Kubernetes clusters made up of control plane node(s) and worker node(s). A control plane node runs the main manager (`kube-controller-manager`), the API server (`kube-apiserver`), a scheduler (`kube-scheduler`, optionally a cloud controller (`cloud-controller-manager`), and a datastore (e.g. `etcd`) which stores the state of the cluster, container settings, and the networking configuration.
 
-The `kube-apiserver` API server exposes an API that you can communicate with using the `kubectl` command line interface or you can even write a custom client or use something like `curl` to interact with the API directly.
+![high-level-architecture.png](!high-level-architecture.png "Kubernetes High Level Architecture")
 
-The `kube-scheduler` uses an algorithm to determine which is the best node to host a Pod of containers. More details [here](https://github.com/kubernetes/kubernetes/blob/master/pkg/scheduler/scheduler.go).
+`kube-apiserver` exposes a RESTful API for the cluster. You can communicate with it using the `kubectl` command line interface, write a custom client, or even use something like `curl` to interact with the API directly.
+
+`kube-scheduler` determines which is the best node to host a Pod of containers and uses an algorithm to do this. More details [here](https://github.com/kubernetes/kubernetes/blob/master/pkg/scheduler/scheduler.go).
 
 `cloud-controller-manager` interacts with other tools, such as [Rancher](https://www.rancher.com/) or [DigitalOcean](https://www.digitalocean.com/) for third-party cluster management and reporting.
 
-Every node in the system including the control plane and worker nodes run two containers, `kube-proxy` and `kubelet`. The `kubelet` container receives PodSpecs for container configuration, downloads and manages any necessary resources and works with the container engine (e.g. `containerd` or `cri-o`) on the local node to ensure containers are running as well as handle error modes like restarting containers upon failure. A PodSpec is a JSON or YAML blob that describes a Pod). `kubelet` will work to configure the local node until the PodSpec has been met. It also sends back status to the `kube-apiserver` for eventual persistence. The `kube-proxy` container creates and manages local firewall rules and networking configuration to expose containers on the network.
+Every node in the system including the control plane and worker nodes run two containers, `kube-proxy` and `kubelet`. The `kubelet` container receives PodSpecs for container configuration, downloads and manages any necessary resources and works with the container engine (e.g. `containerd` or `cri-o`) on the local node to ensure containers are running as well as handle error modes like restarting containers upon failure. A PodSpec is a JSON or YAML blob that describes a Pod. `kubelet` will work to configure the local node until the PodSpec has been met. It also sends back status to the `kube-apiserver` for eventual persistence. The `kube-proxy` container creates and manages local firewall rules and networking configuration to expose containers on the network.
 
-`kubeadm` is a command line tool for bootstrapping a cluster. It allows for easy deployment of a multi-control plane cluster. `kubeadm` uses [Container Network Interface (CNI)](https://github.com/containernetworking/cni) specification as the default network interface mechanism. CNI is an emerging specification with associated libraries to write plugins that configure container networking and remove allocated resources when the container is deleted. Its aim is to provide a common interface between the various networking solutions and container runtimes. For more details go [here](https://github.com/containernetworking/cni).
+`kubeadm` is a command line tool for bootstrapping a cluster. It allows for easy deployment of a control plane and joining workers to the cluster. It can even setup multi-control plane cluster. `kubeadm` uses [Container Network Interface (CNI)](https://github.com/containernetworking/cni) specification as the default network interface mechanism. CNI is an emerging specification with associated libraries to write plugins that configure container networking and remove allocated resources when the container is deleted. Its aim is to provide a common interface between the various networking solutions and container runtimes. See more details [here](https://github.com/containernetworking/cni).
 
 ## Pods
-A Pod is one or more containers which share an IP address, access to storage and namespace. Typically, one container in a Pod runs an application, while other containers support the primary application.
+A Pod is one or more containers which share an IP address, access to storage and namespace. Typically, one container in a Pod runs a primary application, while other containers support the primary application.
 
 ## Operators
 Operators (sometimes called watch-loops or controllers) interrogate the `kube-apiserver` for a particular object state, modifying the object until the declared state matches the current state. One commonly used operator for containers is a Deployment. A Deployment deploys and manages a different operator called a ReplicaSet. A ReplicaSet is an operator which deploys multiple Pods, each with the same spec information. These are called replicas. There are many other Operators such as Jobs and CronJobs to handle single or recurring tasks. You can also write custom resource definitions and Operators.
 
-Other kinds of Kubernetes Operators/objects:
+Other kinds of Kubernetes resources:
 
   * PersistentVolumeClaim (PVC) - Stores state (e.g. volume for database content, drupal code resources). Most cloud Kubernetes providers have default storage mechanism (e.g. Block Volume on Linode). Lots of the default volumes only allow mounting to one container which means if you try to scale up the Deployment you'll see Kubernetes throw multi-mount errors.
   * Deployment - Stateless containerized component (e.g. MariaDB server process, fontend). Reference PVCs to store state. Use initContainers to do pre-run tasks in a container (e.g. drupal themes setup which require  running drupal instance). Setup liveness and readiness probes which are basically heartbeat mechanisms. Be careful not to set these too stringent.
@@ -40,7 +42,7 @@ Other kinds of Kubernetes Operators/objects:
   * DaemonSet - Ensure that a single Pod is deployed on every node. Often used for logging, metrics, and security pods
   * StatefulSet - Deploy Pods in a particular order, such that subsequent Pods are only deployed if previous Pods report a ready status. This can be useful for legacy applications which have runtime dependencies.
 
-context
+Context
 A combination of user, cluster name and namespace. A convenient way to switch between combinations of permissions and restrictions. For example you may have a development cluster and a production cluster, or may be part of both the operations and architecture namespaces. This information is referenced from `~/.kube/config`.
 
 Resource Limits
