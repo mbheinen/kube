@@ -1,5 +1,6 @@
 # Lab 2
-This excercise comes from lab 2 of the Linux Foundation LFD259 course. It creates a two-node Kubernetes cluster running on Ubuntu 20.04.
+This excercise comes from lab 2 of the Linux Foundation LFD259 course. It creates a two-node Kubernetes cluster running on 
+Ubuntu 20.04 using the `kubeadm` tool.
 
 To download the lab materials run:
 ```
@@ -8,7 +9,7 @@ tar -xvf LFD259_V2023-02-28_SOLUTIONS.tar.xz
 ```
 
 ## Setup VMs
-Setup two Ubuntu 20.04 nodes using Vagrant.
+Setup two Ubuntu 20.04 nodes using Vagrant (can also use cloud provider VMs).
 
 ```
 vagrant up
