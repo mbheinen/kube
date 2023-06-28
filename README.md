@@ -15,7 +15,7 @@ Originally only supported Docker, but after Container Runtime Interface (CRI) an
 ## Architecture
 Kubernetes clusters are made up of control plane node(s) and worker node(s). A control plane node runs the main manager (`kube-controller-manager`), the API server (`kube-apiserver`), a scheduler (`kube-scheduler`, optionally a cloud controller (`cloud-controller-manager`), and a datastore (e.g. `etcd`) which stores the state of the cluster, container settings, and the networking configuration.
 
-![./high-level-architecture.png](!high-level-architecture.png "Kubernetes High Level Architecture")
+![high-level-architecture.png](./high-level-architecture.png "Kubernetes High Level Architecture")
 
   * `kube-apiserver` exposes a RESTful API for the cluster. You can communicate with it using the `kubectl` command line interface, write a custom client, or even use something like `curl` to interact with the API directly. Primary manager of the cluster.
   * `kube-scheduler` determines which is the best node to host a Pod of containers and uses an algorithm to do this. More details [here](https://github.com/kubernetes/kubernetes/blob/master/pkg/scheduler/scheduler.go).
