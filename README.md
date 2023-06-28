@@ -1,5 +1,5 @@
 # Kubernetes
-[Kubernetes](https://kubernetes.io/) scratch notes repo used for reference and studying to hopefully get certification some day.
+[Kubernetes](https://kubernetes.io/) notes repo used for reference and studying to hopefully get certification some day.
 
 k8s - "kates"
 
@@ -10,23 +10,37 @@ Kubernetes doesn't exonerate administrators from having to thoroughly know and u
 ## History
 Started as Google open source project announced in 2014. Google used lessons learned from Borg, their internal data center cluster management platform. Goal was to make running containers in production easier since complexity of deploying, monitoring, networking, etc. increases greatly when going from single machine to multiple distributed machines. [Google donated Kubernetes](https://techcrunch.com/2015/07/21/as-kubernetes-hits-1-0-google-donates-technology-to-newly-formed-cloud-native-computing-foundation-with-ibm-intel-twitter-and-others/) to Cloud Native Computing Foundation (CNCF), which is a project within the Linux Foundation, in July 2015.
 
+Originally only supported Docker, but after Container Runtime Interface (CRI) and Open Container Initiatve (OCI) standardization things opened up a lot to allow other container runtimes.
+
 ## Architecture
-Kubernetes clusters made up of control plane node(s) and worker node(s). A control plane node runs the main manager (`kube-controller-manager`), the API server (`kube-apiserver`), a scheduler (`kube-scheduler`, optionally a cloud controller (`cloud-controller-manager`), and a datastore (e.g. `etcd`) which stores the state of the cluster, container settings, and the networking configuration.
+Kubernetes clusters are made up of control plane node(s) and worker node(s). A control plane node runs the main manager (`kube-controller-manager`), the API server (`kube-apiserver`), a scheduler (`kube-scheduler`, optionally a cloud controller (`cloud-controller-manager`), and a datastore (e.g. `etcd`) which stores the state of the cluster, container settings, and the networking configuration.
 
-![high-level-architecture.png](!high-level-architecture.png "Kubernetes High Level Architecture")
+![./high-level-architecture.png](!high-level-architecture.png "Kubernetes High Level Architecture")
 
-`kube-apiserver` exposes a RESTful API for the cluster. You can communicate with it using the `kubectl` command line interface, write a custom client, or even use something like `curl` to interact with the API directly.
+  * `kube-apiserver` exposes a RESTful API for the cluster. You can communicate with it using the `kubectl` command line interface, write a custom client, or even use something like `curl` to interact with the API directly. Primary manager of the cluster.
+  * `kube-scheduler` determines which is the best node to host a Pod of containers and uses an algorithm to do this. More details [here](https://github.com/kubernetes/kubernetes/blob/master/pkg/scheduler/scheduler.go).
+  * `kube-controller-manager` main manager?
+  * `node-controller` takes care of nodes in the cluster. Things like onboarding new nodes in the cluster, handling when nodes become unavailable.
+  * `replication-controller` ensures desired number of containers are running.
+  * `cloud-controller-manager` interacts with other tools, such as [Rancher](https://www.rancher.com/) or [DigitalOcean](https://www.digitalocean.com/) for third-party cluster management and reporting.
 
-`kube-scheduler` determines which is the best node to host a Pod of containers and uses an algorithm to do this. More details [here](https://github.com/kubernetes/kubernetes/blob/master/pkg/scheduler/scheduler.go).
+Every node in the system including the control plane and worker nodes run two containers, `kube-proxy` and `kubelet`. 
 
-`cloud-controller-manager` interacts with other tools, such as [Rancher](https://www.rancher.com/) or [DigitalOcean](https://www.digitalocean.com/) for third-party cluster management and reporting.
-
-Every node in the system including the control plane and worker nodes run two containers, `kube-proxy` and `kubelet`. The `kubelet` container receives PodSpecs for container configuration, downloads and manages any necessary resources and works with the container engine (e.g. `containerd` or `cri-o`) on the local node to ensure containers are running as well as handle error modes like restarting containers upon failure. A PodSpec is a JSON or YAML blob that describes a Pod. `kubelet` will work to configure the local node until the PodSpec has been met. It also sends back status to the `kube-apiserver` for eventual persistence. The `kube-proxy` container creates and manages local firewall rules and networking configuration to expose containers on the network.
+  * Container runtime like `containerd` or `cri-o` to run containers
+  * `kubelet` container receives PodSpecs for container configuration, downloads and manages any necessary resources and works with the container runtime on the local node to ensure containers are running as well as handle error modes like restarting containers upon failure. A PodSpec is a JSON or YAML blob that describes a Pod. `kubelet` will work to configure the local node until the PodSpec has been met. It also sends back status to the `kube-apiserver` for eventual persistence. 
+  * `kube-proxy` container creates and manages local firewall rules and networking configuration to expose containers on the network. This allows containers on the cluster to connect to eachother.
 
 `kubeadm` is a command line tool for bootstrapping a cluster. It allows for easy deployment of a control plane and joining workers to the cluster. It can even setup multi-control plane cluster. `kubeadm` uses [Container Network Interface (CNI)](https://github.com/containernetworking/cni) specification as the default network interface mechanism. CNI is an emerging specification with associated libraries to write plugins that configure container networking and remove allocated resources when the container is deleted. Its aim is to provide a common interface between the various networking solutions and container runtimes. See more details [here](https://github.com/containernetworking/cni).
 
+`crictl` used for debugging container runtimes. Works across all container runtimes unlike `ctr` and `nerdctl` which are just for Docker `containerd`. Not generally used for Kubernetes cluster administration.
+
+## etcd
+etcd is a key-value store used by Kubernetes to store stateful information about the cluster, container settings, and the networking configuration. It can be run as backing service on externan nodes or stacked on control plane notes.
+
+`etcdctl` is a command line tool to interact with an etcd data store. Be aware that there are different versions of `etcdctl` and that `etcdctl` itself supports different API versions. Set the API version using the `ETCDCTL_API` environment variable. Commands are very different between version 2 and 3 of the API. See `etcdctl` usage for details.
+
 ## Pods
-A Pod is one or more containers which share an IP address, access to storage and namespace. Typically, one container in a Pod runs a primary application, while other containers support the primary application.
+A Pod is one or more containers which share an IP address, access to storage and namespace. Typically, one container in a Pod runs a primary application, while other containers in the Pod support the primary application.
 
 ## Operators
 Operators (sometimes called watch-loops or controllers) interrogate the `kube-apiserver` for a particular object state, modifying the object until the declared state matches the current state. One commonly used operator for containers is a Deployment. A Deployment deploys and manages a different operator called a ReplicaSet. A ReplicaSet is an operator which deploys multiple Pods, each with the same spec information. These are called replicas. There are many other Operators such as Jobs and CronJobs to handle single or recurring tasks. You can also write custom resource definitions and Operators.
