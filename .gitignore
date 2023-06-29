@@ -4,3 +4,4 @@
 *.tar.xz
 LFD259/
 .vagrant/
+vm-cluster/roles/
