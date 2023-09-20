@@ -34,6 +34,14 @@ Every node in the system including the control plane and worker nodes run two co
 
 `crictl` used for debugging container runtimes. Works across all container runtimes unlike `ctr` and `nerdctl` which are just for Docker `containerd`. Not generally used for Kubernetes cluster administration.
 
+## Skills
+The following are fundamental k8s skills. Find more details [here](https://github.com/cncf/curriculum):
+
+  * Define, build and modify container images
+  * Utilize container logs
+  * Understand multi-container Pod design
+  * Implement probes and health check patterns
+
 ## etcd
 etcd is a key-value store used by Kubernetes to store stateful information about the cluster, container settings, and the networking configuration. It can be run as backing service on externan nodes or stacked on control plane notes.
 
@@ -42,8 +50,8 @@ etcd is a key-value store used by Kubernetes to store stateful information about
 ## Pods
 A Pod is one or more containers which share an IP address, access to storage and namespace. Typically, one container in a Pod runs a primary application, while other containers in the Pod support the primary application.
 
-## Operators
-Operators (sometimes called watch-loops or controllers) interrogate the `kube-apiserver` for a particular object state, modifying the object until the declared state matches the current state. One commonly used operator for containers is a Deployment. A Deployment deploys and manages a different operator called a ReplicaSet. A ReplicaSet is an operator which deploys multiple Pods, each with the same spec information. These are called replicas. There are many other Operators such as Jobs and CronJobs to handle single or recurring tasks. You can also write custom resource definitions and Operators.
+## Resources
+Resources (sometimes called watch-loops or controllers) interrogate the `kube-apiserver` for a particular object state, modifying the object until the declared state matches the current state. One commonly used resource for containers is a Deployment. A Deployment deploys and manages a different resource called a ReplicaSet. A ReplicaSet is a resource which deploys multiple Pods, each with the same spec information. These are called replicas. There are many other Resources such as Jobs and CronJobs to handle single or recurring tasks. You can also write custom resource definitions and Resources.
 
 Other kinds of Kubernetes resources:
 
@@ -52,7 +60,7 @@ Other kinds of Kubernetes resources:
   * Service - Exposes a Deployment. Can expose internal to the Kubernetes cluster or outside the cluster.
   * ConfigMap - Configuration such as variables, files, etc. Config maps can be directly mounted into Deployments. You can use template to build config file, change file permissions.
   * ClusterIssuer - Used to obtain things like certificates for exposed services.
-  * CronJob - Run something periodically, similar to Linux Cron jobs. However, not super precise, for example it may run several seconds after your configured time so if you need very precise runs better to use different tool or build into your application.
+  * Job and CronJob - Run something once or periodically, similar to Linux Cron jobs. Be aware that k8s CronJobs are not super precise, for example it may run several seconds after your configured time so if you need very precise runs better to use different tool or build into your application.
   * DaemonSet - Ensure that a single Pod is deployed on every node. Often used for logging, metrics, and security pods
   * StatefulSet - Deploy Pods in a particular order, such that subsequent Pods are only deployed if previous Pods report a ready status. This can be useful for legacy applications which have runtime dependencies.
 
@@ -74,6 +82,15 @@ Kubernetes Manifests are files that define a set of Kubernetes Operators that de
 When writing Manifests, separate Operators based on how you want to manage the cluster (e.g. separate database from the app). It is good practice to use labels and set resource limits even though these things aren't required. Labels are arbitrary strings which become part of the object metadata. These are selectors which can then be used when checking or changing the state of objects. A good way to start learning Manifests is to copy an existing Kubernetes Manifests or [Helm](https://helm.sh/) chart and teak it. You'll get working examples running quickly while learning the configuration fields.
 
 A namespace is a segregation of resources, upon which resource quotas and permissions can be applied. Kubernetes objects may be created in a namespace or be cluster-scoped. Users can be limited by the object verbs allowed per namespace. Use namespaces to organize related components of your application. Kubernetes allows you to deploy into a namespace. If no namespace given, Kubernetes will deploy to the default namespace.
+
+## Application Design
+When designing applications to run on k8s, there are lots of things to consider. Here are some helpful guiding questions:
+
+  * Is my application as decoupled as it could be?
+  * Is there anything that could be taken out and made into its own container?
+  * Is each container transient and does it properly react when other containers are transient? If yes, test it out with Chaos Money.
+  * Can I scale any particular component to meet workload demand?
+  * Have I used the m
 
 ## Cloud Providers
 Lots of cloud providers have fully managed Kubernetes clusters. Here are some:
@@ -114,7 +131,7 @@ Simple way to think about [Rook](https://rook.io/) is that it's RAID for Kuberen
 Apache Bench is a command line HTTP benchmark tool, `ab`. Great tool to quickly test scaled sites and APIs that use HTTP. It's part of the [Apache HTTP](https://httpd.apache.org/) project. You can install it with `apt install apache2-utils`.
 
 ## Operators
-You can write your own operator for more complex applications/pods that you need to deploy.
+You can write your own operator for more complex applications/pods that you need to deploy. See more info [here](https://github.com/operator-framework) or browse existing ones on [Operator Hub](https://operatorhub.io/)
 
 ## Sidecar
 Use sidecar container when you need to run another service in support of an existing service or container. Since Kubernetes likes one service per container, it can get messy to try to run more than one service from a single container. This may come into play when you need something like a syslog server for a component. Run the syslog server in a sidecar container which will come up with the main container.
